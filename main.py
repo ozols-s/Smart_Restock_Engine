@@ -1,24 +1,41 @@
+# main.py
 from flask import Flask
 from backend.routes.health_route import health_bp
-from backend.config.settings import Settings
-
+from backend.config.settings import (
+    POSTGRES_URI,
+    SQLALCHEMY_TRACK_MODIFICATIONS,
+    CLICKHOUSE_HOST,
+    CLICKHOUSE_PORT,
+    CLICKHOUSE_USER,
+    CLICKHOUSE_PASSWORD,
+    CLICKHOUSE_DB,
+    HOST,
+    PORT,
+    DEBUG
+)
+from backend.db.connection import init_postgres
 
 def create_app():
     app = Flask(__name__)
 
-    app.config.from_object(Settings)
+    # Настройки SQLAlchemy
+    app.config["SQLALCHEMY_DATABASE_URI"] = POSTGRES_URI
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
 
-    # http-routes
+    # Инициализация PostgreSQL через SQLAlchemy
+    init_postgres(app)
+
+    # Регистрируем маршруты
     app.register_blueprint(health_bp)
 
     return app
 
-
+# Создаем экземпляр приложения
 app = create_app()
 
 if __name__ == "__main__":
     app.run(
-        host=Settings.HOST,
-        port=Settings.PORT,
-        debug=Settings.DEBUG
+        host=HOST,
+        port=PORT,
+        debug=DEBUG
     )

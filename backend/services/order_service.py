@@ -27,13 +27,12 @@ repositories ↔ ml модули.
 import pandas as pd
 
 from backend.ml.order_recommender import OrderRecommender
-from backend.repositories.postgres.stock_repository import StockRepository
-from backend.repositories.postgres.orders_repository import OrdersRepository
-from backend.repositories.clickhouse.sales_repository import SalesRepository
+from backend.repositories.stock_repository import StockRepository
+from backend.repositories.orders_repository import OrdersRepository
+from backend.repositories.sales_repository import SalesRepository
 
-
+#Рекомендуемый заказ
 class OrderService:
-
     def __init__(self):
         self.recommender = OrderRecommender()
         self.stock_repo = StockRepository()
@@ -56,3 +55,12 @@ class OrderService:
         )
 
         return result.to_dict(orient="records")
+
+#Ручное создание заказа
+class ManualOrderService:
+    @staticmethod
+    def create_order(data):
+        if data["quantity"] <= 0:
+            raise ValueError("Quantity must be positive")
+
+        return OrdersRepository.create(data)

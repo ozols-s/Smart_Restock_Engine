@@ -43,7 +43,7 @@ repositories ↔ аналитические алгоритмы.
 """
 
 from backend.ml.product_analytics import ProductAnalytics
-from backend.repositories.clickhouse.sales_repository import SalesRepository
+from backend.repositories.sales_repository import SalesRepository
 
 
 class AnalyticsService:

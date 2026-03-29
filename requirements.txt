@@ -2,3 +2,6 @@ flask
 python-dotenv
 pandas
 numpy
+flask_sqlalchemy
+clickhouse-connect
+psycopg2

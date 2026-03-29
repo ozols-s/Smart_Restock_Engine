@@ -1,7 +1,6 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from backend.db.connection import db
 
 class Orders(db.Model):
     __tablename__ = "orders"
@@ -70,11 +69,6 @@ __all__ = [
     "Users",
 ]
 
-'''users
-orders
-suppliers
-products
-clients'''
 
 """
 Модели базы данных (опционально).
@@ -86,11 +80,4 @@ clients'''
 например:
 - SQLAlchemy ORM
 - Pydantic модели
-
-Если проект использует только:
-- pandas
-- raw SQL
-
-то этот файл может быть пустым
-или использоваться для будущего расширения.
 """

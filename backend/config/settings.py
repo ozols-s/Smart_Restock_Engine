@@ -1,43 +1,23 @@
-"""
-Настройки приложения.
-
-Назначение:
-Централизованное хранение всех конфигураций приложения.
-
-Что должно храниться здесь:
-- параметры подключения к Postgres
-- параметры подключения к ClickHouse
-- параметры подключения к Redis
-- настройки Flask
-- параметры логирования
-- переменные окружения
-
-Что должно быть реализовано:
-- загрузка переменных из .env
-- создание конфигурационных классов или объектов
-- доступ к настройкам из любого модуля приложения
-
-Примеры параметров:
-POSTGRES_HOST
-POSTGRES_PORT
-POSTGRES_DB
-CLICKHOUSE_HOST
-REDIS_HOST
-"""
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
+#Flask
+HOST = "127.0.0.1"
+PORT = 5000
+DEBUG = True
 
-class Settings:
+#PostgreSQL
+POSTGRES_URI = os.getenv(
+    "POSTGRES_URI",
+    "postgresql://postgres:password@localhost:5432/smart_restock"
+)
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    DEBUG = os.getenv("DEBUG", "True") == "True"
-
-    HOST = os.getenv("HOST", "0.0.0.0")
-
-    PORT = int(os.getenv("PORT", 5000))
-
-    APP_NAME = os.getenv("APP_NAME", "Smart Restock")
-
-    VERSION = os.getenv("VERSION", "1.0.0")
+#ClickHouse
+CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST", "localhost")
+CLICKHOUSE_PORT = int(os.getenv("CLICKHOUSE_PORT", 8123))
+CLICKHOUSE_USER = os.getenv("CLICKHOUSE_USER", "default")
+CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD", "")
+CLICKHOUSE_DB = os.getenv("CLICKHOUSE_DB", "default")
