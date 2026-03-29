@@ -16,6 +16,23 @@ class Orders(db.Model):
     expected_delivery = db.Column(db.DateTime)
     status = db.Column(db.String(20))
     user_id = db.Column(db.Integer)
+    
+    def to_dict(self):
+        result = {
+            "id": self.id,
+            "order_number": self.order_number,
+            "supplier_id": self.supplier_id,
+            "product_code": self.product_code,
+            "quantity": self.quantity,
+            "unit_price": self.unit_price,
+            "total_amount": self.total_amount,
+            "order_date": self.order_date,
+            "expected_delivery": self.expected_delivery,
+            "status": self.status,
+            "user_id": self.user_id
+        }
+        return result
+
 
 class Clients(db.Model):
     __tablename__ = "clients"
@@ -23,6 +40,15 @@ class Clients(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_code = db.Column(db.String(50), unique=True)
     name = db.Column(db.String(200))
+
+    def to_dict(self):
+        result = {
+            "id": self.id,
+            "client_code": self.client_code,
+            "name": self.name
+        }
+        return result
+
 
 class Products(db.Model):
     __tablename__ = "products"
@@ -35,6 +61,19 @@ class Products(db.Model):
     article = db.Column(db.String(100))
     measure = db.Column(db.String(20))
     nds_rate = db.Column(db.Float)
+
+    def to_dict(self):
+        result = {
+            "id": self.id,
+            "is_folder": self.is_folder,
+            "parent_id": self.parent_id,
+            "code": self.code,
+            "descr": self.descr,
+            "article": self.article,
+            "measure": self.measure,
+            "nds_rate": self.nds_rate
+        }
+        return result
 
 class Suppliers(db.Model):
     __tablename__ = "suppliers"
