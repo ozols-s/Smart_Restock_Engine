@@ -14,22 +14,19 @@
 и подготавливает их для API.
 """
 
-from backend.repositories.postgres.product_repository import ProductRepository
+from backend.repositories import ProductsRepository
 
 
 class ProductService:
 
     def __init__(self):
-        self.product_repo = ProductRepository()
+        self.product_repo = ProductsRepository()
 
     def get_products(self):
-
-        df = self.product_repo.get_products()
-
-        return df.to_dict(orient="records")
+        raw_products = self.product_repo.get_all()
+        products = [product.to_dict() for product in raw_products]
+        return products
 
     def get_product(self, product_code: str):
-
         df = self.product_repo.get_product(product_code)
-
         return df.to_dict(orient="records")
