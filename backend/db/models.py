@@ -41,14 +41,6 @@ class Clients(db.Model):
     client_code = db.Column(db.String(50), unique=True)
     name = db.Column(db.String(200))
 
-    def to_dict(self):
-        result = {
-            "id": self.id,
-            "client_code": self.client_code,
-            "name": self.name
-        }
-        return result
-
 
 class Products(db.Model):
     __tablename__ = "products"
@@ -75,6 +67,7 @@ class Products(db.Model):
         }
         return result
 
+
 class Suppliers(db.Model):
     __tablename__ = "suppliers"
 
@@ -84,6 +77,17 @@ class Suppliers(db.Model):
     phone = db.Column(db.String(20))
     email = db.Column(db.String(100))
     address = db.Column(db.Text)
+
+    def to_dict(self):
+        result = {
+            "id": self.id,
+            "name": self.name,
+            "contact_person": self.contact_person,
+            "phone": self.phone,
+            "email": self.email,
+            "address": self.address
+        }
+        return result
 
 
 class Users(db.Model):
