@@ -1,7 +1,6 @@
 from backend.db.connection import db
 from backend.db.models import Orders, Suppliers, Products
 
-#Orders
 class OrdersRepository:
     @staticmethod
     def get_all():
@@ -35,7 +34,6 @@ class OrdersRepository:
             db.session.commit()
         return order
 
-#Suppliers
 class SuppliersRepository:
     @staticmethod
     def get_all():
@@ -69,7 +67,6 @@ class SuppliersRepository:
             db.session.commit()
         return supplier
 
-#Products
 class ProductsRepository:
     @staticmethod
     def get_all():
