@@ -4,23 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3732e43d-bf70-4aeb-9977-46359cad2661" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/config/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/db/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/db/connection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/db/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/db/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/repositories/clickhouse/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/repositories/crud_repositories.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/repositories/clickhouse/analytics_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/repositories/analytics_repository.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/repositories/clickhouse/sales_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/repositories/sales_repository.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/repositories/postgres/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/repositories/postgres/order_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/test_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/repositories/postgres/product_repository.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/repositories/postgres/suppliers_repository.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/services/analytics_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/services/analytics_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/services/order_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/services/order_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-    </list>
+    <list default="true" id="3732e43d-bf70-4aeb-9977-46359cad2661" name="Changes" comment="Подключены Postgres и ClickHouse.&#10;Данные из Postgres загружаются" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -120,6 +104,19 @@
       <option name="presentableId" value="Default" />
       <updated>1773229055896</updated>
     </task>
+    <task id="LOCAL-00001" summary="Подключены Postgres и ClickHouse.&#10;Данные из Postgres загружаются">
+      <option name="closed" value="true" />
+      <created>1774803279605</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1774803279605</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Подключены Postgres и ClickHouse.&#10;Данные из Postgres загружаются" />
+    <option name="LAST_COMMIT_MESSAGE" value="Подключены Postgres и ClickHouse.&#10;Данные из Postgres загружаются" />
   </component>
 </project>
