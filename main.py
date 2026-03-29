@@ -1,5 +1,9 @@
-# main.py
 from flask import Flask
+from backend.routes import (
+    products_bp,
+    orders_bp,
+    suppliers_bp
+)
 from backend.routes.health_route import health_bp
 from backend.config.settings import (
     POSTGRES_URI,
@@ -27,6 +31,9 @@ def create_app():
 
     # Регистрируем маршруты
     app.register_blueprint(health_bp)
+    app.register_blueprint(orders_bp)
+    app.register_blueprint(products_bp)
+    app.register_blueprint(suppliers_bp)
 
     return app
 
