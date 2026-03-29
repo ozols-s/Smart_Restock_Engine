@@ -24,39 +24,37 @@
 repositories ↔ ml модули.
 """
 
-import pandas as pd
 
 from backend.ml.order_recommender import OrderRecommender
-from backend.repositories.stock_repository import StockRepository
-from backend.repositories.orders_repository import OrdersRepository
-from backend.repositories.sales_repository import SalesRepository
+from backend.repositories import OrdersRepository
+# from backend.repositories.stock_repository import StockRepository
+# from backend.repositories.sales_repository import SalesRepository
 
-#Рекомендуемый заказ
 class OrderService:
     def __init__(self):
         self.recommender = OrderRecommender()
-        self.stock_repo = StockRepository()
         self.orders_repo = OrdersRepository()
-        self.sales_repo = SalesRepository()
+        # self.stock_repo = StockRepository()
+        # self.sales_repo = SalesRepository()
+
+    def get_orders(self):
+        raw_orders = self.orders_repo.get_all()
+        orders = [order.to_dict() for order in raw_orders]
+        return orders
 
     def calculate_recommended_orders(self, business_params: dict):
-
         forecast_df = self.sales_repo.get_sales_forecast()
-
         stock_df = self.stock_repo.get_current_stock()
-
         orders_df = self.orders_repo.get_orders_in_transit()
-
         result = self.recommender.calculate_recommended_order(
             forecast_df,
             stock_df,
             orders_df,
             business_params
         )
-
         return result.to_dict(orient="records")
 
-#Ручное создание заказа
+
 class ManualOrderService:
     @staticmethod
     def create_order(data):
