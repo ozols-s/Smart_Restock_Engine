@@ -19,12 +19,16 @@ def init_postgres(app):
     db.init_app(app)
 
 #ClickHouse
+_client = None
+
 def get_clickhouse_client():
-    client = clickhouse_connect.get_client(
-        host=CLICKHOUSE_HOST,
-        port=CLICKHOUSE_PORT,
-        username=CLICKHOUSE_USER,
-        password=CLICKHOUSE_PASSWORD,
-        database=CLICKHOUSE_DB
-    )
-    return client
+    global _client
+    if _client is None:
+        _client = clickhouse_connect.get_client(
+            host=CLICKHOUSE_HOST,
+            port=CLICKHOUSE_PORT,
+            username=CLICKHOUSE_USER,
+            password=CLICKHOUSE_PASSWORD,
+            database=CLICKHOUSE_DB
+        )
+    return _client

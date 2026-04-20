@@ -1,68 +1,15 @@
-'''Файл:
-
-ml/product_analytics.py
-
-Сюда переносится:
-
-ProductAnalytics
-
-Он содержит:
-
-ABC analysis
-
-XYZ analysis
-
-Seasonality
-
-Profitability
-
-Это логически одна группа → analytics.'''
-
-"""
-Модуль аналитики продуктов.
-
-Назначение:
-Реализация аналитических алгоритмов для анализа продаж товаров.
-
-Основные функции:
-- ABC анализ
-- XYZ анализ
-- анализ сезонности
-- анализ прибыльности товаров
-
-Класс:
-ProductAnalytics
-
-Основные методы:
-- abc_analysis()
-- xyz_analysis()
-- seasonality_analysis()
-- top_products_by_profitability()
-
-Этот модуль работает только с pandas DataFrame
-и не должен содержать:
-- SQL
-- Flask
-- HTTP запросы
-- работу с базами данных
-
-Он получает DataFrame и возвращает результаты анализа.
-"""
-
 import pandas as pd
-
 
 class ProductAnalytics:
 
     def __init__(
         self,
-        df,
-        product_col="product_code",
-        revenue_col="revenue",
-        quantity_col="quantity",
-        date_col="date"
+        df: pd.DataFrame,
+        product_col: str = "product_code",
+        revenue_col: str = "revenue",
+        quantity_col: str = "quantity",
+        date_col: str = "date"
     ):
-
         self.df = df.copy()
 
         self.product_col = product_col
@@ -70,25 +17,44 @@ class ProductAnalytics:
         self.quantity_col = quantity_col
         self.date_col = date_col
 
-        self.df[self.date_col] = pd.to_datetime(
-            self.df[self.date_col],
-            errors="coerce"
-        )
+        # безопасная обработка дат
+        if self.date_col in self.df.columns:
+            self.df[self.date_col] = pd.to_datetime(
+                self.df[self.date_col],
+                errors="coerce"
+            )
+
+        # убираем мусор
+        self.df = self.df.dropna(subset=[self.product_col])
 
     def abc_analysis(self):
+
+        if self.df.empty:
+            return pd.DataFrame()
 
         revenue = (
             self.df
             .groupby(self.product_col)[self.revenue_col]
             .sum()
-            .sort_values(ascending=False)
             .reset_index()
+        )
+
+        revenue = revenue[revenue[self.revenue_col] > 0]
+
+        if revenue.empty:
+            return pd.DataFrame()
+
+        revenue = revenue.sort_values(
+            by=self.revenue_col,
+            ascending=False
         )
 
         total = revenue[self.revenue_col].sum()
 
-        revenue["share"] = revenue[self.revenue_col] / total
+        if total == 0:
+            return pd.DataFrame()
 
+        revenue["share"] = revenue[self.revenue_col] / total
         revenue["cumulative"] = revenue["share"].cumsum()
 
         revenue["category"] = revenue["cumulative"].apply(
@@ -97,19 +63,23 @@ class ProductAnalytics:
 
         return revenue
 
-    def _assign_abc(self, value):
+    def _assign_abc(self, value: float):
 
         if value <= 0.8:
             return "A"
-
-        if value <= 0.95:
+        elif value <= 0.95:
             return "B"
-
         return "C"
 
     def xyz_analysis(self):
 
-        df = self.df.copy()
+        if self.df.empty or self.date_col not in self.df.columns:
+            return pd.DataFrame()
+
+        df = self.df.dropna(subset=[self.date_col]).copy()
+
+        if df.empty:
+            return pd.DataFrame()
 
         df["period"] = df[self.date_col].dt.to_period("M")
 
@@ -128,28 +98,69 @@ class ProductAnalytics:
                 grouped[self.product_col] == product
             ][self.quantity_col]
 
-            mean = product_data.mean()
+            if len(product_data) < 2:
+                continue
 
+            mean = product_data.mean()
             std = product_data.std()
 
             cv = std / mean if mean > 0 else 0
 
-            category = self._assign_xyz(cv)
-
             result.append({
                 self.product_col: product,
+                "mean": mean,
+                "std": std,
                 "cv": cv,
-                "xyz_category": category
+                "xyz_category": self._assign_xyz(cv)
             })
 
         return pd.DataFrame(result)
 
-    def _assign_xyz(self, cv):
+    def _assign_xyz(self, cv: float):
 
         if cv <= 0.1:
             return "X"
-
-        if cv <= 0.25:
+        elif cv <= 0.25:
             return "Y"
-
         return "Z"
+
+    def seasonality_analysis(self):
+
+        if self.df.empty or self.date_col not in self.df.columns:
+            return pd.DataFrame()
+
+        df = self.df.dropna(subset=[self.date_col]).copy()
+
+        df["month"] = df[self.date_col].dt.month
+
+        result = (
+            df
+            .groupby("month")[[self.revenue_col, self.quantity_col]]
+            .sum()
+            .reset_index()
+            .sort_values("month")
+        )
+
+        return result
+
+    def top_products_by_profitability(self, top_n: int = 10):
+
+        if self.df.empty:
+            return pd.DataFrame()
+
+        grouped = (
+            self.df
+            .groupby(self.product_col)
+            .agg({
+                self.revenue_col: "sum",
+                self.quantity_col: "sum"
+            })
+            .reset_index()
+        )
+
+        grouped["avg_price"] = grouped[self.revenue_col] / grouped[self.quantity_col].replace(0, 1)
+
+        return grouped.sort_values(
+            by=self.revenue_col,
+            ascending=False
+        ).head(top_n)

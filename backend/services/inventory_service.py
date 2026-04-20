@@ -1,63 +1,68 @@
-'''Файл:
+#Собирает данные для подсчета необходимого заказа
+import pandas as pd
 
-services/inventory_service.py
-
-Он вызывает ML.
-
-from backend.ml.order_recommender import OrderRecommender
+from backend.repositories.sales_repository import SalesRepository
+from backend.repositories.crud_repositories import OrdersRepository, ProductsRepository
+from backend.repositories.stock_repository import StockRepository
 
 class InventoryService:
 
-    def __init__(self):
-        self.recommender = OrderRecommender()
+    @staticmethod
+    def get_sales_df():
+        data = SalesRepository.get_sales()
 
-    def get_recommendations(self, forecast_df, stock_df, orders_df, params):
+        if not data:
+            return pd.DataFrame()
 
-        result = self.recommender.calculate_recommended_order(
-            forecast_df,
-            stock_df,
-            orders_df,
-            params
+        df = pd.DataFrame(data, columns=["date", "product_code", "quantity", "revenue"])
+        return df
+
+    @staticmethod
+    def get_stock_df():
+        stocks = StockRepository.get_all()
+
+        return pd.DataFrame([
+            {
+                "SKU": s.product_code,
+                "stock": s.value
+            }
+            for s in stocks
+        ])
+
+    @staticmethod
+    def get_orders_df():
+        orders = OrdersRepository.get_all()
+
+        return pd.DataFrame([
+            {
+                "SKU": o.product_code,
+                "quantity": o.quantity,
+                "expected_delivery": o.expected_delivery,
+                "status": o.status
+            }
+            for o in orders
+        ])
+
+    @staticmethod
+    def get_forecast_df():
+        #позже сюда будет подключено ml
+        sales_df = InventoryService.get_sales_df()
+
+        if sales_df.empty:
+            return pd.DataFrame()
+
+        # простейший forecast = среднее
+        forecast = (
+            sales_df.groupby("product_code")["quantity"]
+            .mean()
+            .reset_index()
         )
 
-        return result.to_dict(orient="records")'''
+        forecast.rename(columns={
+            "product_code": "SKU",
+            "quantity": "Value"
+        }, inplace=True)
 
-"""
-Сервис управления складскими остатками.
+        forecast["Date"] = pd.Timestamp.now()
 
-Назначение:
-Работа с данными о запасах товаров.
-
-Основные задачи:
-- получение текущих остатков
-- анализ динамики запасов
-- подготовка данных для расчета заказов
-- интеграция со складскими системами
-
-Источники данных:
-- Postgres
-- ClickHouse
-- внешние системы учета склада
-"""
-
-from backend.repositories.postgres.stock_repository import StockRepository
-
-
-class InventoryService:
-
-    def __init__(self):
-        self.stock_repo = StockRepository()
-
-    def get_inventory(self):
-
-        stock_df = self.stock_repo.get_current_stock()
-
-        return stock_df.to_dict(orient="records")
-
-    def get_inventory_by_sku(self, sku: str):
-
-        stock_df = self.stock_repo.get_current_stock()
-
-        result = stock_df[stock_df["SKU"] == sku]
-
-        return result.to_dict(orient="records")
+        return forecast

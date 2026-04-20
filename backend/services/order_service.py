@@ -16,26 +16,22 @@
 - загрузка заказов в пути
 - запуск алгоритма расчета заказа
 
-Этот слой НЕ содержит:
-- SQL
-- аналитические алгоритмы
-
-Он только связывает:
+Он связывает:
 repositories ↔ ml модули.
 """
 
 
 from backend.ml.order_recommender import OrderRecommender
 from backend.repositories import OrdersRepository
-# from backend.repositories.stock_repository import StockRepository
-# from backend.repositories.sales_repository import SalesRepository
+from backend.repositories.stock_repository import StockRepository
+from backend.repositories.sales_repository import SalesRepository
 
 class OrderService:
     def __init__(self):
         self.recommender = OrderRecommender()
         self.orders_repo = OrdersRepository()
-        # self.stock_repo = StockRepository()
-        # self.sales_repo = SalesRepository()
+        self.stock_repo = StockRepository()
+        self.sales_repo = SalesRepository()
 
     def get_orders(self):
         raw_orders = self.orders_repo.get_all()
