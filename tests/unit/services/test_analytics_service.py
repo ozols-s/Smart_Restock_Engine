@@ -1,31 +1,66 @@
-def test_get_abc(analytics_service):
-    result = analytics_service.get_abc()
+from unittest.mock import MagicMock, patch
+import pandas as pd
 
-    assert isinstance(result, list)
-    assert len(result) > 0
+def test_analytics_service_fully_isolated():
+    # 1. mock repository
+    mock_repo = MagicMock()
 
-    for r in result:
-        assert "product_code" in r
-        assert "revenue" in r
-        assert "category" in r
+    mock_df = pd.DataFrame([
+        {"product_code": "A", "revenue": 100, "quantity": 10},
+        {"product_code": "B", "revenue": 200, "quantity": 20},
+    ])
 
+    mock_repo.get_sales.return_value = mock_df
 
-def test_get_xyz(analytics_service):
-    result = analytics_service.get_xyz()
+    # 2. patch SalesRepository ДО создания сервиса
+    with patch(
+        "backend.services.analytics_service.SalesRepository",
+        return_value=mock_repo
+    ):
 
-    assert isinstance(result, list)
+        from backend.services.analytics_service import AnalyticsService
+        service = AnalyticsService()
 
-    for r in result:
-        assert "cv" in r
-        assert "xyz_category" in r
-        assert r["xyz_category"] in ["X", "Y", "Z"]
+        # 3. patch ProductAnalytics
+        with patch(
+            "backend.services.analytics_service.ProductAnalytics"
+        ) as MockAnalytics:
 
+            instance = MockAnalytics.return_value
 
-def test_get_seasonality(analytics_service):
-    result = analytics_service.get_seasonality()
+            # мокируем методы аналитики
+            instance.abc_analysis.return_value = pd.DataFrame([
+                {"product_code": "A"}
+            ])
 
-    assert isinstance(result, list)
+            instance.xyz_analysis.return_value = pd.DataFrame([
+                {"product_code": "B"}
+            ])
 
-    for r in result:
-        assert "month" in r
-        assert "revenue" in r
+            instance.seasonality_analysis.return_value = pd.DataFrame([
+                {"month": 1}
+            ])
+
+            instance.top_products_by_profitability.return_value = pd.DataFrame([
+                {"product_code": "A"}
+            ])
+
+            # 4. вызовы сервиса
+            abc = service.get_abc()
+            xyz = service.get_xyz()
+            season = service.get_seasonality()
+            top = service.get_top_products()
+
+            # 5. проверки результата
+            assert isinstance(abc, list)
+            assert isinstance(xyz, list)
+            assert isinstance(season, list)
+            assert isinstance(top, list)
+
+            assert abc == [{"product_code": "A"}]
+            assert xyz == [{"product_code": "B"}]
+
+            # 6. проверки изоляции
+            mock_repo.get_sales.assert_called_once()
+
+            assert MockAnalytics.call_count == 1

@@ -5,12 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3732e43d-bf70-4aeb-9977-46359cad2661" name="Changes" comment="Завершена работа с сервисами и репозиториями (кроме recommended_order)">
-      <change afterPath="$PROJECT_DIR$/backend/services/dashboard_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/unit/ml/test_order_recommender.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/unit/services/test_dashboard_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/unit/services/test_order_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/create_views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Smart_Restock.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Smart_Restock.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/conftest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/conftest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/repositories/analytics_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/repositories/analytics_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/repositories/sales_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/repositories/sales_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/services/analytics_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/services/analytics_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/unit/services/test_analytics_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/services/test_analytics_service.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
