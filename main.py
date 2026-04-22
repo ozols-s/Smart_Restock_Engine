@@ -2,7 +2,8 @@ from flask import Flask
 from backend.routes import (
     products_bp,
     orders_bp,
-    suppliers_bp
+    suppliers_bp,
+    analytics_bp
 )
 from backend.routes.health_route import health_bp
 from backend.config.settings import (
@@ -34,6 +35,7 @@ def create_app():
     app.register_blueprint(orders_bp)
     app.register_blueprint(products_bp)
     app.register_blueprint(suppliers_bp)
+    app.register_blueprint(analytics_bp)
 
     return app
 

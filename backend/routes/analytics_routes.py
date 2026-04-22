@@ -1,32 +1,21 @@
-'''Файл:
+from flask import Blueprint, jsonify
 
-routes/analytics_routes.py
-from flask import Blueprint
-from backend.services.analytics_service import AnalyticsService
+from backend.services import AnalyticsService
 
-analytics_bp = Blueprint("analytics", __name__)
-service = AnalyticsService()
 
-@analytics_bp.route("/abc")
-def abc():
-    return service.get_abc(...)'''
+analytics_service = AnalyticsService()
 
-"""
-HTTP маршруты Flask API.
 
-Назначение:
-Определение REST API эндпоинтов.
+analytics_bp = Blueprint(
+    "analytics",
+    __name__,
+    url_prefix='/analytics'
+)
 
-Каждый маршрут:
-- принимает HTTP запрос
-- валидирует параметры
-- вызывает соответствующий сервис
-- возвращает JSON ответ
 
-Routes НЕ должны содержать:
-- бизнес логику
-- SQL
-- аналитические алгоритмы
-
-Они только вызывают сервисы.
-"""
+@analytics_bp.route("/abc", methods=["GET"])
+def get_analytics_abc():
+    result = analytics_service.get_abc()
+    return jsonify({
+        "data": result
+    })
