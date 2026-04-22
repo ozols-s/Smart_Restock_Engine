@@ -10,14 +10,14 @@ class AnalyticsService:
 
     #Сделал один вызов в БД вместо 4х
     def _get_df(self):
-        if self._df is None:
-            self._df = self.sales_repo.get_sales()
+        # if self._df is None:
+        self._df = self.sales_repo.get_sales()
         return self._df
 
     #Один вызов класса вместо 4х
     def _get_analytics(self):
-        if self._analytics is None:
-            self._analytics = ProductAnalytics(self._get_df())
+        # if self._analytics is None:
+        self._analytics = ProductAnalytics(self._get_df())
         return self._analytics
 
     def get_abc(self):
