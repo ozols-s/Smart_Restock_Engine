@@ -8,7 +8,7 @@ docker compose up --build -d
 
 --build нужен, если
 
-## 📤 Импорт из dump
+## Импорт из dump
 
 ### PostgreSQL
 
@@ -33,7 +33,7 @@ cat dumps/stock_levels.sql | docker exec -i smart_restock_clickhouse clickhouse-
 #### 2. Загрузка данных
 
 ```powershell
-type dumps/sales.csv | docker exec -i smart_restock_clickhouse clickhouse-client --query="INSERT INTO sales FORMAT CSVWithNames"
+type dumps/sales.csv | docker exec -i smart_restock_clickhouse clickhouse-client --query="INSERT INTO sales_analytics FORMAT CSVWithNames"
 type dumps/orders.csv | docker exec -i smart_restock_clickhouse clickhouse-client --query="INSERT INTO orders_history FORMAT CSVWithNames"
 type dumps/stock_levels.csv | docker exec -i smart_restock_clickhouse clickhouse-client --query="INSERT INTO stock_levels FORMAT CSVWithNames"
 ```

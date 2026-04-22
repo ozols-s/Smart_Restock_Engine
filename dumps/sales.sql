@@ -1,10 +1,10 @@
-CREATE TABLE default.sales
+CREATE TABLE default.sales_analytics
 (
     id UInt64,
     product_code String,
     client_code String,
-    earned Float32,
-    value Int32,
+    revenue Float32,
+    quantity Int32,
     date DateTime
 )
 ENGINE = MergeTree

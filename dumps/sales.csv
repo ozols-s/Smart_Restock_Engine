@@ -1,4 +1,4 @@
-"id","product_code","client_code","earned","value","date"
+"id","product_code","client_code","revenue","quantity","date"
 1,P001,C001,120.5,10,2026-03-01 10:00:00
 2,P002,C002,75.0,5,2026-03-02 12:30:00
 3,P003,C003,200.0,20,2026-03-03 14:15:00
