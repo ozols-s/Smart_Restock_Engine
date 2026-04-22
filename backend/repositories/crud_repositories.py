@@ -7,6 +7,10 @@ class OrdersRepository:
         return Orders.query.all()
 
     @staticmethod
+    def get_orders_in_transit():
+        return Orders.query.filter(Orders.status.in_(["shipped", "processing"])).all()
+    #создай новые данные о заказах
+    @staticmethod
     def get_by_id(order_id):
         return Orders.query.get(order_id)
 

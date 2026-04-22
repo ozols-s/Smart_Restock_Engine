@@ -10,7 +10,7 @@ class AnalyticsRepository:
 
         query = """
         SELECT 
-            product_code,
+            product_code,  
             sum(revenue) as revenue
         FROM sales_analytics
         GROUP BY product_code

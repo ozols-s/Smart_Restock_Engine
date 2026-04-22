@@ -6,6 +6,8 @@ from backend.repositories.crud_repositories import OrdersRepository
 
 from backend.services.order_service import OrderService
 
+from backend.config.business_params import BUSINESS_PARAMS
+
 class DashboardService:
     def __init__(self):
         self.sales_repo = SalesRepository()
@@ -17,7 +19,7 @@ class DashboardService:
     #KPI
     def get_kpi(self):
         sales_df = self.sales_repo.get_sales()
-        stock_df = self.stock_repo.get_stock()
+        stock_df = self.stock_repo.get_latest()
 
         risk_products = self._calculate_risk_products(sales_df, stock_df)
         forecast_accuracy = 0.92  # пока заглушка
@@ -68,7 +70,8 @@ class DashboardService:
 
     #Рекомендуемый заказ
     def get_recommendations(self):
-        return self.order_service.get_recommended_orders()
+        params = BUSINESS_PARAMS
+        return self.order_service.calculate_recommended_orders(params)
 
     #summary
     def get_summary(self):

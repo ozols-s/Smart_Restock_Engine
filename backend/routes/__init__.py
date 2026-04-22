@@ -7,5 +7,6 @@ from backend.routes.analytics_routes import analytics_bp
 __all__ = [
     "products_bp",
     "orders_bp",
-    "suppliers_bp"
+    "suppliers_bp",
+    "analytics_bp"
 ]

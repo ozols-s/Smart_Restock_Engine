@@ -147,7 +147,7 @@ def dashboard_service(
     service.stock_repo.get_stock.return_value = dashboard_stock_df
     service.orders_repo.get_all.return_value = mock_dashboard_orders
 
-    service.order_service.get_recommended_orders.return_value = [
+    service.order_service.calculate_recommended_orders.return_value = [
         {"SKU": "A", "recommended_quantity": 50}
     ]
 
