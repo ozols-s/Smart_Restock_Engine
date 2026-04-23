@@ -1,9 +1,9 @@
 from backend.db.connection import get_clickhouse_client
 
 class SalesRepository:
-
-    def __init__(self, client=None):
-        self.client = client or get_clickhouse_client()
+    def _query_df(self, query: str, parameters: dict = None):
+        client = get_clickhouse_client()
+        return client.query_df(query, parameters=parameters or {})
 
     def get_sales(self, limit: int = 10000):
         query = """
@@ -17,7 +17,7 @@ class SalesRepository:
         LIMIT %(limit)s
         """
 
-        return self.client.query_df(query, parameters={"limit": limit})
+        return self._query_df(query, {"limit": limit})
 
     def get_sales_by_product(self, product_code: str):
         query = """
@@ -31,7 +31,7 @@ class SalesRepository:
         ORDER BY date
         """
 
-        return self.client.query_df(query, parameters={"product_code": product_code})
+        return self._query_df(query, {"product_code": product_code})
 
     def get_sales_aggregated(self):
         query = """
@@ -43,7 +43,7 @@ class SalesRepository:
         GROUP BY product_code
         """
 
-        return self.client.query_df(query)
+        return self._query_df(query)
 
     def get_sales_by_period(self, start_date: str, end_date: str):
         query = """
@@ -56,7 +56,7 @@ class SalesRepository:
         WHERE date BETWEEN %(start)s AND %(end)s
         """
 
-        return self.client.query_df(query, parameters={
+        return self._query_df(query, {
             "start": start_date,
             "end": end_date
         })

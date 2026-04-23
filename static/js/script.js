@@ -1,414 +1,199 @@
-//Графики (болванки)
-class ChartManager {
-    constructor() {
-        this.charts = new Map();
-    }
+document.addEventListener("DOMContentLoaded", () => {
+    loadKPI();
+    loadForecast();
+    loadRecommendations();
+});
 
-    initForecastChart() {
-        const canvas = document.getElementById('forecastChart');
-        if (!canvas) {
-            return;
+
+//KPI
+async function loadKPI() {
+    try {
+        const res = await fetch('/kpi');
+        const json = await res.json();
+        const kpi = json.data;
+
+        // Обновляем карточки KPI
+        const kpiCards = document.querySelectorAll(".kpi-card");
+
+        if (kpiCards.length >= 4) {
+            // 1. Риски
+            kpiCards[0].querySelector(".kpi-value").innerText =
+                `${(kpi.at_risk_items || 0) + (kpi.critical_items || 0)} SKU`;
+
+            // 2. точность прогноза
+            kpiCards[1].querySelector(".kpi-value").innerText =
+                kpi.forecast_accuracy ?? "-";
+
+            // 3. упущенный доход
+            kpiCards[2].querySelector(".kpi-value").innerText =
+                kpi.lost_revenue ?? "-";
+
+            // 4. время поставки
+            kpiCards[3].querySelector(".kpi-value").innerText =
+                kpi.delivery_time ?? "-";
         }
-        
-        const ctx = canvas.getContext('2d');
-        
-        // Данные для графика
-        const dates = ['01.12', '02.12', '03.12', '04.12', '05.12', '06.12', '07.12', '08.12', '09.12', '10.12', '11.12', '12.12', '13.12', '14.12'];
-        const salesData = [45, 52, 49, 60, 55, 58, 62, null, null, null, null, null, null, null];
-        const forecastData = [null, null, null, null, null, null, 62, 65, 68, 72, 75, 78, 70, 65];
-        const stockData = [180, 160, 140, 110, 85, 60, 35, null, null, null, null, null, null, null];
-        const stockForecast = [null, null, null, null, null, null, 35, 20, 0, 0, 0, 0, 0, 0];
-        
-        const chart = new Chart(ctx, {
+
+    } catch (err) {
+        console.error("KPI load error:", err);
+    }
+}
+
+//График главной страницы
+let forecastChartInstance = null;
+
+async function loadForecast() {
+    try {
+        const res = await fetch('/forecast');
+        const json = await res.json();
+        const data = json.data;
+
+        if (!data) return;
+
+        const ctx = document.getElementById('forecastChart');
+        if (!ctx) return;
+
+        const labels = data.labels || ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+        const demand = data.demand || [65, 59, 80, 81, 56, 55, 40];
+        const stock = data.stock || [28, 48, 40, 19, 86, 27, 90];
+
+        if (forecastChartInstance) {
+            forecastChartInstance.destroy();
+        }
+
+        forecastChartInstance = new Chart(ctx.getContext('2d'), {
             type: 'line',
             data: {
-                labels: dates,
+                labels: labels,
                 datasets: [
                     {
-                        label: 'Исторические продажи',
-                        data: salesData,
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.1
-                    },
-                    {
                         label: 'Прогноз спроса',
-                        data: forecastData,
-                        borderColor: '#2980b9',
-                        borderDash: [5, 5],
+                        data: demand,
                         borderWidth: 2,
-                        fill: false,
-                        tension: 0.1,
-                        pointStyle: 'circle',
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    },
-                    {
-                        label: 'Исторические остатки',
-                        data: stockData,
-                        borderColor: '#2ecc71',
-                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                        borderWidth: 2,
-                        fill: false,
-                        tension: 0.1
+                        tension: 0.4
                     },
                     {
                         label: 'Прогноз остатков',
-                        data: stockForecast,
-                        borderColor: '#e74c3c',
+                        data: stock,
                         borderWidth: 2,
-                        fill: false,
-                        tension: 0.1,
-                        pointStyle: 'circle',
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    },
-                    {
-                        label: 'Минимальный запас',
-                        data: Array(14).fill(20),
-                        borderColor: '#e74c3c',
-                        borderWidth: 2,
-                        borderDash: [3, 3],
-                        fill: false,
-                        pointRadius: 0,
-                        pointHoverRadius: 0
+                        tension: 0.4
                     }
                 ]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    title: {
-                        display: false
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Количество единиц'
-                        }
-                    }
+                    legend: { position: 'top' },
+                    title: { display: true, text: 'Прогноз на период' }
                 }
             }
         });
-        
-        this.charts.set('forecast', chart);
-    }
 
-    initAnalyticsCharts() {
-        
-        // Продажи по категориям
-        const salesCtx = document.getElementById('salesByCategoryChart');
-        if (salesCtx) {
-            try {
-                const chart = new Chart(salesCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Энергетики', 'Мороженное', 'Напитки', 'Чипсы', 'Аксессуары'],
-                        datasets: [{
-                            label: 'Продажи (шт.)',
-                            data: [1250, 890, 1560, 540, 1320], 
-                            backgroundColor: [
-                                'rgba(52, 152, 219, 0.8)',
-                                'rgba(46, 204, 113, 0.8)',
-                                'rgba(155, 89, 182, 0.8)',
-                                'rgba(241, 196, 15, 0.8)',
-                                'rgba(230, 126, 34, 0.8)'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
+    } catch (err) {
+        console.error("Forecast error:", err);
+    }
+}
+
+//Рекомендации
+async function loadRecommendations() {
+    try {
+        const res = await fetch('/recommended');
+        const json = await res.json();
+        const recommendations = json.data;
+
+        const tbody = document.querySelector("tbody");
+        if (!tbody) return;
+
+        if (!recommendations || recommendations.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="10" style="text-align:center;">
+                        Нет рекомендаций
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = recommendations.map(rec => {
+            const qty = Number(rec.recommended_quantity || 0);
+
+            return `
+                <tr>
+                    <td><strong>${rec.SKU}</strong></td>
+                    <td>${rec.current_stock ?? 0}</td>
+                    <td>${rec.orders_in_transit ?? 0}</td>
+                    <td>${rec.demand_during_lead_time ?? 0}</td>
+                    <td>${rec.expected_stockout_date || '-'}</td>
+                    <td><strong>${qty}</strong></td>
+                    <td>${rec.status || '-'}</td>
+                    <td>${rec.priority || '-'}</td>
+                    <td>${rec.reason || ''}</td>
+                    <td>
+                        ${qty > 0
+                            ? `<button class="action-btn btn-order" onclick="createOrder('${rec.SKU}', ${qty})">Заказать</button>`
+                            : `<button class="action-btn btn-skip" onclick="skipRecommendation('${rec.SKU}')">Пропустить</button>`
                         }
-                    }
-                });
-                this.charts.set('salesByCategory', chart);
-            } catch (error) {
-                console.error('Error initializing sales chart:', error);
-            }
-        }
+                    </td>
+                </tr>
+            `;
+        }).join('');
 
-        // ABC-анализ
-        const abcCtx = document.getElementById('abcAnalysisChart');
-        if (abcCtx) {
-            try {
-                const chart = new Chart(abcCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Категория A (70%)', 'Категория B (20%)', 'Категория C (10%)'],
-                        datasets: [{
-                            data: [70, 20, 10], 
-                            backgroundColor: [
-                                'rgba(46, 204, 113, 0.8)',
-                                'rgba(52, 152, 219, 0.8)',
-                                'rgba(241, 196, 15, 0.8)'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-                this.charts.set('abcAnalysis', chart);
-            } catch (error) {
-                console.error('Error initializing ABC chart:', error);
-            }
-        }
-
-        // Сезонность 
-        const seasonCtx = document.getElementById('seasonalityChart');
-        if (seasonCtx) {
-            try {
-                const chart = new Chart(seasonCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-                        datasets: [{
-                            label: 'Продажи (шт.)',
-                            data: [320, 350, 380, 420, 480, 520, 580, 560, 500, 450, 380, 350], 
-                            borderColor: '#3498db',
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                            borderWidth: 3,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-                this.charts.set('seasonality', chart);
-            } catch (error) {
-                console.error('Error initializing seasonality chart:', error);
-            }
-        }
-    }
-
-    initAllCharts() {
-        this.initForecastChart();
-        this.initAnalyticsCharts();
+    } catch (err) {
+        console.error("Recommendations error:", err);
     }
 }
 
-// Обработчики событий
-function initEventHandlers() {
-    // Кнопки "Заказать"
-    document.querySelectorAll('.btn-order').forEach(button => {
-        button.addEventListener('click', function() {
-            const product = this.closest('tr').querySelector('td:first-child').textContent;
-            alert(`Заказ на ${product} оформлен!`);
-            this.textContent = 'Заказано';
-            this.disabled = true;
-            this.classList.remove('btn-order');
-            this.classList.add('btn-skip');
-        });
-    });
+//прочее
+async function refreshData() {
+    const btn = event.target.closest('button');
+    const original = btn.innerHTML;
 
-    // Кнопки "Пропустить"
-    document.querySelectorAll('.btn-skip').forEach(button => {
-        button.addEventListener('click', function() {
-            const product = this.closest('tr').querySelector('td:first-child').textContent;
-            alert(`Рекомендация для ${product} пропущена!`);
-            this.textContent = 'Пропущено';
-            this.disabled = true;
-        });
-    });
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обновление...';
+    btn.disabled = true;
 
-    // Обновление данных
-    const updateBtn = document.querySelector('.btn-primary');
-    if (updateBtn && updateBtn.textContent.includes('Обновить')) {
-        updateBtn.addEventListener('click', function() {
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Обновление...';
-            this.disabled = true;
-            
-            setTimeout(() => {
-                this.innerHTML = originalText;
-                this.disabled = false;
-                alert('Данные успешно обновлены!');
-            }, 1500);
-        });
+    try {
+        await Promise.all([
+            loadKPI(),
+            loadForecast(),
+            loadRecommendations()
+        ]);
+    } finally {
+        btn.innerHTML = original;
+        btn.disabled = false;
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const chartManager = new ChartManager();
-    chartManager.initAllCharts();
-    initEventHandlers();
-});
-
-// Функции для работы с поставщиками
-function viewSupplier(id) {
-    alert('Просмотр поставщика ID: ' + id);
-    // window.location.href = `/suppliers/${id}`;
+function refreshRecommendations() {
+    loadRecommendations();
 }
 
-function editSupplier(id) {
-    alert('Редактирование поставщика ID: ' + id);
-    // window.location.href = `/suppliers/${id}/edit`;
-}
+//действия с orders
+async function createOrder(sku, quantity) {
+    if (!confirm(`Создать заказ ${sku} (${quantity} шт.)?`)) return;
 
-function deleteSupplier(id) {
-    if (confirm('Удалить поставщика?')) {
-        // Отправка DELETE запроса
-        fetch(`/suppliers/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('Поставщик удален');
-                location.reload();
-            } else {
-                alert('Ошибка при удалении');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Ошибка сети');
+    try {
+        const res = await fetch('/create_order', { //не /api/
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ sku, quantity })
         });
-    }
-}
 
-// Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    // Поиск в таблице
-    const searchInput = document.querySelector('.search-input');
-    if (searchInput) {
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('.suppliers-table tbody tr');
+        const data = await res.json();
 
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-    }
-
-    // Добавление нового поставщика
-    const addButton = document.querySelector('.btn-add');
-    if (addButton) {
-        addButton.addEventListener('click', function() {
-            alert('Добавление нового поставщика');
-            // window.location.href = '/suppliers/new';
-        });
-    }
-
-    // Фильтрация по статусу
-    const filterSelects = document.querySelectorAll('.filter-select');
-    filterSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            applyFilters();
-        });
-    });
-});
-
-// Применение фильтров
-function applyFilters() {
-    // Здесь можно реализовать фильтрацию через AJAX запрос к серверу
-    console.log('Фильтры применены');
-}
-
-// Экспорт таблицы в Excel
-function exportToExcel() {
-    alert('Экспорт в Excel');
-    // Реализация экспорта
-}
-
-// Обновление статуса поставщика
-function updateSupplierStatus(supplierId, status) {
-    fetch(`/suppliers/${supplierId}/status`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: status })
-    })
-    .then(response => response.json())
-    .then(data => {
         if (data.success) {
-            alert('Статус обновлен');
-            location.reload();
-        }
-    });
-}
-
-function refreshOrders() {
-    location.reload();
-}
-
-function applyFilters() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const supplierFilter = document.getElementById('supplierFilter').value;
-    const dateFrom = document.getElementById('dateFrom').value;
-    const dateTo = document.getElementById('dateTo').value;
-
-    const rows = document.querySelectorAll('.orders-table tbody tr');
-
-    rows.forEach(row => {
-        let show = true;
-
-        // Фильтр по статусу
-        if (statusFilter && row.getAttribute('data-status') !== statusFilter) {
-            show = false;
+            alert("Заказ создан");
+            loadRecommendations();
+        } else {
+            alert(data.error || "Ошибка создания заказа");
         }
 
-        // Фильтр по поставщику
-        if (supplierFilter && row.getAttribute('data-supplier') !== supplierFilter) {
-            show = false;
-        }
-
-        row.style.display = show ? '' : 'none';
-    });
+    } catch (err) {
+        console.error(err);
+        alert("Ошибка сети");
+    }
 }
 
-function clearFilters() {
-    document.getElementById('statusFilter').value = '';
-    document.getElementById('supplierFilter').value = '';
-    document.getElementById('dateFrom').value = '';
-    document.getElementById('dateTo').value = '';
-
-    const rows = document.querySelectorAll('.orders-table tbody tr');
-    rows.forEach(row => {
-        row.style.display = '';
-    });
+function skipRecommendation(sku) {
+    alert(`Пропущено: ${sku}`);
 }
-
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    // Автоматически устанавливаем даты
-    const today = new Date().toISOString().split('T')[0];
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const weekAgoStr = weekAgo.toISOString().split('T')[0];
-
-    document.getElementById('dateFrom').value = weekAgoStr;
-    document.getElementById('dateTo').value = today;
-});
