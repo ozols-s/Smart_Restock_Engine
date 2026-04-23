@@ -6,8 +6,6 @@
 docker compose up --build -d
 ```
 
---build нужен, если
-
 ## Импорт из dump
 
 ### PostgreSQL
