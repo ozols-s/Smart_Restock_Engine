@@ -15,7 +15,7 @@ dashboard_bp = Blueprint(
 
 @dashboard_bp.route("/recommended", methods=["GET"])
 def get_recommended():
-    result = dashboard_service.get_recommendations()
+    result = dashboard_service.get_summary()["recommended_orders"]
     return jsonify({
         "data": result
     })
