@@ -1,54 +1,3 @@
-'''Файл:
-
-ml/order_recommender.py
-
-Сюда переносится класс:
-
-RecommendedOrder
-
-Он остается почти без изменений.
-
-Но лучше переименовать:
-
-class OrderRecommender'''
-
-"""
-Алгоритм расчета рекомендованного заказа.
-
-Назначение:
-Расчет оптимального количества заказа для каждого SKU
-на основе:
-
-- прогноза спроса
-- текущего остатка
-- заказов в пути
-- бизнес параметров
-
-Основной класс:
-OrderRecommender
-
-Основные методы:
-
-calculate_recommended_order()
-    основной метод расчета заказа
-
-calculate_stocks()
-    прогноз динамики остатков
-
-determine_order_status()
-    определение статуса заказа
-
-generate_reason_with_transit()
-    генерация объяснения рекомендации
-
-Этот модуль содержит только бизнес-логику и pandas.
-
-Он НЕ должен:
-- выполнять SQL запросы
-- обращаться к Flask
-- работать с API
-"""
-
 import pandas as pd
 import numpy as np
 
@@ -69,11 +18,11 @@ class OrderRecommender:
 
         results = []
 
-        for sku in forecast_df["SKU"].unique():
+        for sku in forecast_df["product_code"].unique():
 
-            sku_forecast = forecast_df[forecast_df["SKU"] == sku]
-            sku_stock = current_stock_df[current_stock_df["SKU"] == sku]
-            sku_orders = orders_df[orders_df["SKU"] == sku]
+            sku_forecast = forecast_df[forecast_df["product_code"] == sku]
+            sku_stock = current_stock_df[current_stock_df["product_code"] == sku]
+            sku_orders = orders_df[orders_df["product_code"] == sku]
 
             current_stock = self._get_current_stock(sku_stock)
 
@@ -114,7 +63,7 @@ class OrderRecommender:
         if stock_df.empty:
             return 0
 
-        return float(stock_df.iloc[0]["quantity"])
+        return float(stock_df.iloc[0]["value"])
 
     def _calculate_lead_time_demand(
         self,
@@ -122,9 +71,9 @@ class OrderRecommender:
         lead_time
     ):
 
-        forecast_df = forecast_df.sort_values("Date")
+        forecast_df = forecast_df.sort_values("date")
 
-        demand = forecast_df.head(lead_time)["Value"].sum()
+        demand = forecast_df.head(lead_time)["quantity"].sum()
 
         return float(demand)
 

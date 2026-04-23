@@ -99,7 +99,15 @@ class ProductAnalytics:
             ][self.quantity_col]
 
             if len(product_data) < 2:
+                result.append({
+                    self.product_col: product,
+                    "mean": product_data.mean(),
+                    "std": None,
+                    "cv": None,
+                    "xyz_category": None
+                })
                 continue
+
 
             mean = product_data.mean()
             std = product_data.std()

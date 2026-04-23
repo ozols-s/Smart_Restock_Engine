@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify
 
 from backend.services import AnalyticsService
 
-
 analytics_service = AnalyticsService()
 
 

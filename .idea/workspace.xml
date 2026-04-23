@@ -4,22 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3732e43d-bf70-4aeb-9977-46359cad2661" name="Changes" comment="Исправлены сервисы">
-      <change afterPath="$PROJECT_DIR$/backend/config/business_params.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/services/forecast_service.py" afterDir="false" />
+    <list default="true" id="3732e43d-bf70-4aeb-9977-46359cad2661" name="Changes" comment="Исправлены order и dashboard сервисы">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/repositories/analytics_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/repositories/analytics_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ml/order_recommender.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ml/order_recommender.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/ml/product_analytics.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/ml/product_analytics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/repositories/crud_repositories.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/repositories/crud_repositories.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/orders_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/orders_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/services/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/services/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routes/analytics_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/analytics_routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/services/dashboard_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/services/dashboard_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/services/inventory_service.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/services/order_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/services/order_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/orders.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/orders.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/conftest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/conftest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/unit/services/test_inventory_service.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/unit/services/test_order_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/unit/services/test_order_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dumps/postgres_dump.sql" beforeDir="false" afterPath="$PROJECT_DIR$/dumps/postgres_dump.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dumps/sales.csv" beforeDir="false" afterPath="$PROJECT_DIR$/dumps/sales.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dumps/stock_levels.csv" beforeDir="false" afterPath="$PROJECT_DIR$/dumps/stock_levels.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,13 +139,32 @@
       <option name="project" value="LOCAL" />
       <updated>1776866250948</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Исправлены order и dashboard сервисы">
+      <option name="closed" value="true" />
+      <created>1776895810705</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1776895810705</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Подключены Postgres и ClickHouse.&#10;Данные из Postgres загружаются" />
     <MESSAGE value="Завершена работа с сервисами и репозиториями (кроме recommended_order)" />
     <MESSAGE value="Исправлены сервисы" />
-    <option name="LAST_COMMIT_MESSAGE" value="Исправлены сервисы" />
+    <MESSAGE value="Исправлены order и dashboard сервисы" />
+    <option name="LAST_COMMIT_MESSAGE" value="Исправлены order и dashboard сервисы" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/backend/routes/dashboard_routes.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

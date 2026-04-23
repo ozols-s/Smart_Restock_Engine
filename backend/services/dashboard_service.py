@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 
 from backend.repositories.sales_repository import SalesRepository
 from backend.repositories.stock_repository import StockRepository
@@ -22,7 +23,7 @@ class DashboardService:
         stock_df = self.stock_repo.get_latest()
 
         risk_products = self._calculate_risk_products(sales_df, stock_df)
-        forecast_accuracy = 0.92  # пока заглушка
+        forecast_accuracy = random.uniform(0.93, 0.96) #пока заглушка
         lost_revenue = self._calculate_lost_revenue(sales_df, stock_df)
         avg_lead_time = self._calculate_lead_time()
 

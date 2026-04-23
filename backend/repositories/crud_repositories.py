@@ -1,6 +1,8 @@
 from backend.db.connection import db
 from backend.db.models import Orders, Suppliers, Products
 
+import pandas as pd
+
 class OrdersRepository:
     @staticmethod
     def get_all():
@@ -8,8 +10,15 @@ class OrdersRepository:
 
     @staticmethod
     def get_orders_in_transit():
-        return Orders.query.filter(Orders.status.in_(["shipped", "processing"])).all()
-    #создай новые данные о заказах
+        orders = Orders.query.filter(Orders.status.in_(["shipped", "processing"])).all()
+        return pd.DataFrame([
+            {
+                "product_code": o.product_code,
+                "quantity": o.quantity,
+            }
+            for o in orders
+        ])
+
     @staticmethod
     def get_by_id(order_id):
         return Orders.query.get(order_id)
