@@ -1,5 +1,6 @@
 from backend.ml.product_analytics import ProductAnalytics
 from backend.repositories.sales_repository import SalesRepository
+from backend.cache.cache_decorator import cache
 
 class AnalyticsService:
     def __init__(self, sales_repository=None):
@@ -20,14 +21,18 @@ class AnalyticsService:
         self._analytics = ProductAnalytics(self._get_df())
         return self._analytics
 
+    @cache(ttl=120)
     def get_abc(self):
         return self._get_analytics().abc_analysis().to_dict("records")
 
+    @cache(ttl=120)
     def get_xyz(self):
         return self._get_analytics().xyz_analysis().to_dict("records")
 
+    @cache(ttl=120)
     def get_seasonality(self):
         return self._get_analytics().seasonality_analysis().to_dict("records")
 
+    @cache(ttl=120)
     def get_top_products(self):
         return self._get_analytics().top_products_by_profitability().to_dict("records")
