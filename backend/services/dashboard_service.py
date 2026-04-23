@@ -9,6 +9,9 @@ from backend.services.order_service import OrderService
 
 from backend.config.business_params import BUSINESS_PARAMS
 
+from backend.cache.cache_decorator import cache
+
+
 class DashboardService:
     def __init__(self):
         self.sales_repo = SalesRepository()
@@ -74,7 +77,7 @@ class DashboardService:
         params = BUSINESS_PARAMS
         return self.order_service.calculate_recommended_orders(params)
 
-    #summary
+    @cache(ttl=120)
     def get_summary(self):
         return {
             "kpi": self.get_kpi(),
