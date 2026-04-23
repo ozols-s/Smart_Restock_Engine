@@ -1,25 +1,11 @@
-"""
-Redis Client
+import os
+import redis
 
-Назначение:
-Этот файл отвечает за подключение и работу с Redis.
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 
-Основные задачи:
-- создание и хранение глобального клиента Redis
-- предоставление функций для кэширования данных
-- управление TTL (временем жизни кэша)
-
-Что должно быть реализовано:
-- создание Redis клиента на основе настроек из config.settings
-- функции:
-    get_cache(key)
-    set_cache(key, value, ttl)
-    delete_cache(key)
-
-Использование:
-Кэширование результатов тяжелых аналитических запросов,
-например:
-- ABC анализа
-- XYZ анализа
-- прогнозов продаж
-"""
+redis_client = redis.Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    decode_responses=True
+)
