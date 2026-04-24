@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //KPI
 async function loadKPI() {
     try {
-        const res = await fetch('/kpi');
+        const res = await fetch('/dashboard/kpi');
         const json = await res.json();
         const kpi = json.data;
 
@@ -18,11 +18,12 @@ async function loadKPI() {
         if (kpiCards.length >= 4) {
             // 1. Риски
             kpiCards[0].querySelector(".kpi-value").innerText =
-                `${(kpi.at_risk_items || 0) + (kpi.critical_items || 0)} SKU`;
+                // `${(kpi.at_risk_items || 0) + (kpi.critical_items || 0)} SKU`;
+                `${kpi.risk_products || 0} SKU`
 
             // 2. точность прогноза
             kpiCards[1].querySelector(".kpi-value").innerText =
-                kpi.forecast_accuracy ?? "-";
+                kpi.forecast_accuracy.toFixed(4) ?? "-";
 
             // 3. упущенный доход
             kpiCards[2].querySelector(".kpi-value").innerText =
@@ -30,7 +31,7 @@ async function loadKPI() {
 
             // 4. время поставки
             kpiCards[3].querySelector(".kpi-value").innerText =
-                kpi.delivery_time ?? "-";
+                kpi.avg_lead_time ?? "-";
         }
 
     } catch (err) {
@@ -43,19 +44,21 @@ let forecastChartInstance = null;
 
 async function loadForecast() {
     try {
-        const res = await fetch('/forecast');
+        const res = await fetch('/dashboard/forecast');
         const json = await res.json();
         const data = json.data;
+        console.log(data);
 
         if (!data) return;
 
         const ctx = document.getElementById('forecastChart');
         if (!ctx) return;
 
-        const labels = data.labels || ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+        const labels = data.dates || ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 
-        const demand = data.demand || [65, 59, 80, 81, 56, 55, 40];
+        const sales = data.sales || [65, 59, 80, 81, 56, 55, 40];
         const stock = data.stock || [28, 48, 40, 19, 86, 27, 90];
+        const forecast = data.forecast;
 
         if (forecastChartInstance) {
             forecastChartInstance.destroy();
@@ -68,13 +71,13 @@ async function loadForecast() {
                 datasets: [
                     {
                         label: 'Прогноз спроса',
-                        data: demand,
+                        data: forecast,
                         borderWidth: 2,
                         tension: 0.4
                     },
                     {
-                        label: 'Прогноз остатков',
-                        data: stock,
+                        label: 'Спрос',
+                        data: sales,
                         borderWidth: 2,
                         tension: 0.4
                     }
@@ -97,7 +100,7 @@ async function loadForecast() {
 //Рекомендации
 async function loadRecommendations() {
     try {
-        const res = await fetch('/recommended');
+        const res = await fetch('dashboard/recommended');
         const json = await res.json();
         const recommendations = json.data;
 

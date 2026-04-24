@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import render_template
 from backend.routes import (
     products_bp,
     orders_bp,
@@ -10,11 +11,6 @@ from backend.routes.health_route import health_bp
 from backend.config.settings import (
     POSTGRES_URI,
     SQLALCHEMY_TRACK_MODIFICATIONS,
-    CLICKHOUSE_HOST,
-    CLICKHOUSE_PORT,
-    CLICKHOUSE_USER,
-    CLICKHOUSE_PASSWORD,
-    CLICKHOUSE_DB,
     HOST,
     PORT,
     DEBUG
@@ -22,7 +18,13 @@ from backend.config.settings import (
 from backend.db.connection import init_postgres
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+    )
+    
+    @app.route("/")
+    def index():
+        return render_template("index.html")
 
     # Настройки SQLAlchemy
     app.config["SQLALCHEMY_DATABASE_URI"] = POSTGRES_URI

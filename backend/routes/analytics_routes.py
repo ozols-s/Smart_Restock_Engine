@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 
 from backend.services import AnalyticsService
 
@@ -39,3 +39,7 @@ def get_analytics_top_products():
     return jsonify({
         "data": result
     })
+
+@analytics_bp.route("/", methods=["GET"])
+def index():
+    return render_template("analytics.html")

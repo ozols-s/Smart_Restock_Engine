@@ -7,12 +7,12 @@ dashboard_service = DashboardService()
 dashboard_bp = Blueprint(
     "dashboard",
     __name__,
-    #url_prefix='/dashboard' #из за него главная страница это /dashboard/
+    url_prefix='/dashboard' #из за него главная страница это /dashboard/
 )
 
 @dashboard_bp.route("/recommended", methods=["GET"])
 def get_recommended():
-    result = dashboard_service.get_summary()["recommended_orders"]
+    result = dashboard_service.get_recommendations()
     return jsonify({
         "data": result
     })
