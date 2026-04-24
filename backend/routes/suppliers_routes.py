@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 
 from backend.services import SupplierService
 
@@ -12,9 +12,13 @@ suppliers_bp = Blueprint(
 )
 
 
-@suppliers_bp.route("/suppliers", methods=["GET"])
+@suppliers_bp.route("/api/suppliers", methods=["GET"])
 def get_all_suppliers():
     suppliers = supplier_service.get_suppliers()
     return jsonify({
         "data": suppliers
     })
+
+@suppliers_bp.route("/suppliers", methods=["GET"])
+def suppliers():
+   return render_template("suppliers.html")
