@@ -23,11 +23,15 @@ async function loadKPI() {
 
             // 2. точность прогноза
             kpiCards[1].querySelector(".kpi-value").innerText =
-                kpi.forecast_accuracy.toFixed(4) ?? "-";
+                kpi.forecast_accuracy
+                    ? (kpi.forecast_accuracy).toFixed(0) + "%"
+                    : "-";
 
             // 3. упущенный доход
             kpiCards[2].querySelector(".kpi-value").innerText =
-                kpi.lost_revenue ?? "-";
+                kpi.lost_revenue
+                    ? kpi.lost_revenue.toLocaleString('ru-RU') + " руб."
+                    : "-";
 
             // 4. время поставки
             kpiCards[3].querySelector(".kpi-value").innerText =
@@ -127,11 +131,8 @@ async function loadRecommendations() {
                     <td>${rec.current_stock ?? 0}</td>
                     <td>${rec.orders_in_transit ?? 0}</td>
                     <td>${rec.demand_during_lead_time ?? 0}</td>
-                    <td>${rec.expected_stockout_date || '-'}</td>
                     <td><strong>${qty}</strong></td>
                     <td>${rec.status || '-'}</td>
-                    <td>${rec.priority || '-'}</td>
-                    <td>${rec.reason || ''}</td>
                     <td>
                         ${qty > 0
                             ? `<button class="action-btn btn-order" onclick="createOrder('${rec.SKU}', ${qty})">Заказать</button>`

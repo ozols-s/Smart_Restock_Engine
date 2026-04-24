@@ -26,7 +26,7 @@ class DashboardService:
         stock_df = self.stock_repo.get_latest()
 
         risk_products = self._calculate_risk_products(sales_df, stock_df)
-        forecast_accuracy = random.uniform(0.93, 0.96) #пока заглушка
+        forecast_accuracy = 93 #пока заглушка
         lost_revenue = self._calculate_lost_revenue(sales_df, stock_df)
         avg_lead_time = self._calculate_lead_time()
 
@@ -52,24 +52,25 @@ class DashboardService:
                 "stock": []
             }
 
-        sales_df["date"] = pd.to_datetime(sales_df["date"])
+        sales_df["date"] = pd.to_datetime(sales_df["date"]).dt.date
         sales_df = sales_df.sort_values("date")
 
         grouped = sales_df.groupby("date")["quantity"].sum().reset_index()
 
-        grouped["forecast"] = (
-            grouped["quantity"]
-            .rolling(3)
-            .mean()
-            .bfill()
-        )
-        grouped["stock"] = grouped["quantity"].iloc[::-1].cumsum().iloc[::-1]
+        grouped = grouped.tail(7)
+
+        grouped["forecast"] = grouped["quantity"].rolling(3).mean().bfill()
+
+        stock_df = self.stock_repo.get_latest()
+        current_stock = stock_df["value"].sum() if not stock_df.empty else 0
+
+        grouped["stock"] = current_stock - grouped["quantity"].cumsum()
 
         return {
             "dates": grouped["date"].astype(str).tolist(),
             "sales": grouped["quantity"].tolist(),
-            "forecast": grouped["forecast"].tolist(),
-            "stock": grouped["stock"].tolist()
+            "forecast": grouped["forecast"].round(2).tolist(),
+            "stock": grouped["stock"].round(2).tolist()
         }
 
     #Рекомендуемый заказ
